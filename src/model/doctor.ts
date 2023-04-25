@@ -6,7 +6,12 @@ const doctorSchema = mongoose.Schema({
   location: String,
   ratings: Number,
   profileImg: String,
+  email: {
+    type: String,
+    unique: true,
+  },
 });
 
 const Doctor = mongoose.model("Doctor", doctorSchema);
-module.exports = Doctor;
+
+export default Doctor;

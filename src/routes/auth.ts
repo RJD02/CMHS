@@ -1,3 +1,5 @@
+import { Request, Response } from "express";
+
 const express = require("express");
 const Student = require("../model/student");
 const Teacher = require("../model/teacher");
@@ -8,7 +10,7 @@ const STUDENT = "STUDENT";
 const TEACHER = "TEACHER";
 const DOCTOR = "DOCTOR";
 
-Router.post("/login", async (req, res) => {
+Router.post("/login", async (req: Request, res: Response) => {
   const { username, password, type, email } = req.body;
   console.log(req.body);
   try {
@@ -35,7 +37,7 @@ Router.post("/login", async (req, res) => {
   }
 });
 
-Router.post("/signup", async (req, res) => {
+Router.post("/signup", async (req: Request, res: Response) => {
   const { username, password, type, email } = req.body;
   console.log(req.body);
   try {
@@ -52,21 +54,21 @@ Router.post("/signup", async (req, res) => {
       return res.status(200).json({ message: "email already exists" });
     let newUser = null;
     if (type === STUDENT) {
-      newUser = await Student({
+      newUser = await new Student({
         username,
         password,
         email,
       });
       await newUser.save();
     } else if (type === DOCTOR) {
-      newUser = await Doctor({
+      newUser = await new Doctor({
         username,
         password,
         email,
       });
       await newUser.save();
     } else if (type === TEACHER) {
-      newUser = await Teacher({
+      newUser = await new Teacher({
         username,
         password,
         email,
@@ -80,4 +82,4 @@ Router.post("/signup", async (req, res) => {
   }
 });
 
-module.exports = Router;
+export default Router;
