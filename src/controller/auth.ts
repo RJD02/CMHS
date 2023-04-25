@@ -1,3 +1,4 @@
+import Parent from "./../model/parent";
 import { Request, Response } from "express";
 import Student from "../model/student";
 import Doctor from "../model/doctor";
@@ -5,6 +6,7 @@ import Teacher from "../model/teacher";
 import { Roles } from "../utils/types";
 import { checkPassword, hashPassword } from "../utils/hashing";
 import jwt from "jsonwebtoken";
+import { UniqueOTP } from "../utils/parentKeyGenerator";
 
 export const loginController = async (req: Request, res: Response) => {
   const { username, password, type, email } = req.body;
@@ -16,8 +18,10 @@ export const loginController = async (req: Request, res: Response) => {
       user = await Student.findOne({ email });
     } else if (type === Roles.TEACHER) {
       user = await Teacher.findOne({ email });
-    } else {
+    } else if (type === Roles.DOCTOR) {
       user = await Doctor.findOne({ email });
+    } else if (type === Roles.PARENT) {
+      user = await Parent.findOne({ email });
     }
     console.log(user);
     if (user === null) {
@@ -43,7 +47,8 @@ export const loginController = async (req: Request, res: Response) => {
 };
 
 export const signupController = async (req: Request, res: Response) => {
-  const { username, password, type, email, name } = req.body;
+  const { username, password, type, email, name, parentKey, teacherKey } =
+    req.body;
   console.log(req.body);
   try {
     // ensure there is no user
@@ -62,12 +67,29 @@ export const signupController = async (req: Request, res: Response) => {
       return res.status(402).json({ message: "please fill all credentials" });
     const encryptedPassword = hashPassword(password);
     if (type === Roles.STUDENT) {
+      if (!parentKey || !teacherKey)
+        return res
+          .status(401)
+          .json({ message: "Parent/Teacher code is required" });
+      const parent = await Parent.findOne({ parentKey });
+      const teacher = await Teacher.findOne({ teacherKey });
+      if (!parent || !teacher)
+        res
+          .status(403)
+          .json({ message: "No parent/teacher with that parent code exists" });
       newUser = await new Student({
         username,
         password: encryptedPassword,
         email,
         name,
       });
+      newUser.parent = parent._id;
+      newUser.teacher = teacher._id;
+      await newUser.save();
+      parent.children.push(newUser._id);
+      teacher.students.push(newUser._id);
+      await teacher.save();
+      await parent.save();
     } else if (type === Roles.DOCTOR) {
       newUser = await new Doctor({
         username,
@@ -76,11 +98,22 @@ export const signupController = async (req: Request, res: Response) => {
         name,
       });
     } else if (type === Roles.TEACHER) {
+      const teacherKey = UniqueOTP(10);
       newUser = await new Teacher({
         username,
         password: encryptedPassword,
         email,
         name,
+        teacherKey,
+      });
+    } else if (type === Roles.PARENT) {
+      const parentKey = UniqueOTP(10);
+      newUser = await new Parent({
+        username,
+        password: encryptedPassword,
+        email,
+        name,
+        parentKey,
       });
     }
     const token = jwt.sign(
