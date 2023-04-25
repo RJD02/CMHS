@@ -29,14 +29,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
-const asyncWrapper = async (fn: Function) => {
-  try {
-    return fn;
-  } catch (e) {
-    console.log(e);
-  }
-};
-
 app.use("/auth", authRoutes);
 
 app.post("/api/doctor", async (req: Request, res: Response) => {

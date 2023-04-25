@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-const saltRounds = 10;
+const saltRounds = 12;
 const myPlainTextPassword = "hello world";
 const someOtherPlainTextPassword = "hey";
 

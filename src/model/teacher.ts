@@ -1,23 +1,13 @@
+import { extendSchema } from "../utils/extendSchema";
+import { userSchema } from "./user";
+
 const mongoose = require("mongoose");
 
-const teacherSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  username: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
+const teacherSchema = extendSchema(userSchema, {
   schoolName: {
     type: String,
-    // required: true,
   },
-  exp: {
+  experience: {
     type: Number,
   },
 });

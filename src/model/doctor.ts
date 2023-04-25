@@ -1,15 +1,12 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { extendSchema } from "../utils/extendSchema";
+import { userSchema } from "./user";
 
-const doctorSchema = mongoose.Schema({
-  name: String,
-  exp: Number,
-  location: String,
-  ratings: Number,
+const doctorSchema = extendSchema(userSchema, {
+  experience: { type: Number },
+  location: { type: String },
+  ratings: { type: Number },
   profileImg: String,
-  email: {
-    type: String,
-    unique: true,
-  },
 });
 
 const Doctor = mongoose.model("Doctor", doctorSchema);
