@@ -10,6 +10,7 @@ import Doctor from "./model/doctor";
 import authRoutes from "./routes/auth";
 import { Request, Response } from "express";
 import { checkPassword, hashPassword } from "./utils/hashing";
+import { apiRouter } from "./routes/api";
 
 console.log(hashPassword("hello world"));
 
@@ -30,6 +31,7 @@ app.use(express.json());
 app.use(cors({ origin: "*" }));
 
 app.use("/auth", authRoutes);
+app.use("/api", apiRouter);
 
 app.post("/api/doctor", async (req: Request, res: Response) => {
   const { name, exp, location, ratings, profileImg } = req.body;
