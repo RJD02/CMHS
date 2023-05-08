@@ -7,6 +7,7 @@ const doctorSchema = extendSchema(userSchema, {
   location: { type: String },
   ratings: { type: Number },
   profileImg: String,
+  tags: { type: [String] },
 });
 
 const Doctor = mongoose.model("Doctor", doctorSchema);

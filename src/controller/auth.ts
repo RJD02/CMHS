@@ -38,9 +38,13 @@ export const loginController = async (req: Request, res: Response) => {
         expiresIn: "2h",
       }
     );
+    console.log(token);
     user.token = token;
     await user.save();
-    return res.status(200).json({ message: "Successfully logged in", user });
+    console.log(user.token);
+    return res
+      .status(200)
+      .json({ message: "Successfully logged in", user, token });
   } catch (e) {
     console.log(e);
     return res.status(500).json({ message: "Something went wrong" });
@@ -48,7 +52,7 @@ export const loginController = async (req: Request, res: Response) => {
 };
 
 export const signupController = async (req: Request, res: Response) => {
-  const { username, password, type, email, name, parentKey, teacherKey } =
+  const { username, password, type, email, name, parentKey, teacherKey, tags } =
     req.body;
   console.log(req.body);
   try {
@@ -96,11 +100,16 @@ export const signupController = async (req: Request, res: Response) => {
       await teacher.save();
       await parent.save();
     } else if (type === Roles.DOCTOR) {
+      if (!tags || tags.length === 0) {
+        return res.status(200).json({ message: "Add some tags" });
+      }
+
       newUser = await new Doctor({
         username,
         password: encryptedPassword,
         email,
         name,
+        tags,
       });
     } else if (type === Roles.TEACHER) {
       const teacherKey = UniqueOTP(10);
@@ -120,9 +129,11 @@ export const signupController = async (req: Request, res: Response) => {
         name,
         parentKey,
       });
+    } else {
+      return res.status(404).json({ message: "type not defined" });
     }
     const token = jwt.sign(
-      { user_id: newUser._id, email, name },
+      { user_id: newUser._id, email },
       process.env.TOKEN_KEY,
       {
         expiresIn: "2h",
@@ -130,7 +141,9 @@ export const signupController = async (req: Request, res: Response) => {
     );
     newUser.token = token;
     await newUser.save();
-    return res.status(200).json({ message: "New user created", user: newUser });
+    return res
+      .status(200)
+      .json({ message: "New user created", user: newUser, token });
   } catch (e) {
     console.log(e);
     return res.status(500).json({ message: "Something went wrong" });
