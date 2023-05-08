@@ -104,7 +104,7 @@ export const signupController = async (req: Request, res: Response) => {
         return res.status(200).json({ message: "Add some tags" });
       }
 
-      newUser = await new Doctor({
+      newUser =  new Doctor({
         username,
         password: encryptedPassword,
         email,
@@ -113,7 +113,7 @@ export const signupController = async (req: Request, res: Response) => {
       });
     } else if (type === Roles.TEACHER) {
       const teacherKey = UniqueOTP(10);
-      newUser = await new Teacher({
+      newUser =  new Teacher({
         username,
         password: encryptedPassword,
         email,

@@ -47,7 +47,7 @@ const analyzeScore = async (req: Request | any, res: Response) => {
     if (anxietyScore === 10 || anxietyScore > 5) {
       if (stressScore === 10 || stressScore > 5) {
         const doctorsList = await Doctor.find({
-          tag: { $in: ["depression", "anxiety", "stress"] },
+          tags: { $in: ["depression", "anxiety", "stress"] },
         });
         return res.status(200).json({
           message: "You have high levels of all three abnormalities",
@@ -55,7 +55,7 @@ const analyzeScore = async (req: Request | any, res: Response) => {
         });
       } else {
         const doctorsList = await Doctor.find({
-          tag: { $in: ["depression", "anxiety"] },
+          tags: { $in: ["depression", "anxiety"] },
         });
         return res.status(200).json({
           message: "You have high levels of depression and anxiety",
@@ -65,7 +65,7 @@ const analyzeScore = async (req: Request | any, res: Response) => {
     } else {
       if (stressScore === 10 || stressScore > 5) {
         const doctorList = await Doctor.find({
-          tag: { $in: ["depression", "stress"] },
+          tags: { $in: ["depression", "stress"] },
         });
         return res
           .status(200)
@@ -79,7 +79,7 @@ const analyzeScore = async (req: Request | any, res: Response) => {
     if (anxietyScore === 10 || anxietyScore > 5) {
       if (stressScore === 10 || stressScore > 5) {
         const doctorList = await Doctor.find({
-          tag: { $in: ["anxiety", "stress"] },
+          tags: { $in: ["anxiety", "stress"] },
         });
         return res
           .status(200)
@@ -88,7 +88,7 @@ const analyzeScore = async (req: Request | any, res: Response) => {
             doctorList,
           });
       } else {
-        const doctorList = await Doctor.find({ tag: { $in: ["anxiety"] } });
+        const doctorList = await Doctor.find({ tags: { $in: ["anxiety"] } });
         return res
           .status(200)
           .json({ message: "You have high level of anxiety", doctorList });
