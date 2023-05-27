@@ -67,12 +67,10 @@ const analyzeScore = async (req: Request | any, res: Response) => {
         const doctorList = await Doctor.find({
           tags: { $in: ["depression", "stress"] },
         });
-        return res
-          .status(200)
-          .json({
-            message: "You have high levels of depression and stress",
-            doctorList,
-          });
+        return res.status(200).json({
+          message: "You have high levels of depression and stress",
+          doctorList,
+        });
       }
     }
   } else {
@@ -81,12 +79,10 @@ const analyzeScore = async (req: Request | any, res: Response) => {
         const doctorList = await Doctor.find({
           tags: { $in: ["anxiety", "stress"] },
         });
-        return res
-          .status(200)
-          .json({
-            message: "You have high levels of anxiety and stress",
-            doctorList,
-          });
+        return res.status(200).json({
+          message: "You have high levels of anxiety and stress",
+          doctorList,
+        });
       } else {
         const doctorList = await Doctor.find({ tags: { $in: ["anxiety"] } });
         return res
@@ -94,14 +90,32 @@ const analyzeScore = async (req: Request | any, res: Response) => {
           .json({ message: "You have high level of anxiety", doctorList });
       }
     } else {
-      return res
-        .status(200)
-        .json({
-          message:
-            "You have perfectly normal personality. You don't need a doctor",
-        });
+      return res.status(200).json({
+        message:
+          "You have perfectly normal personality. You don't need a doctor",
+      });
     }
   }
 };
 
-export const apiController = { teacherDetails, parentDetails, analyzeScore };
+const getDoctor = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  if (!id) return res.status(400).json({ message: "id is required" });
+  try {
+    const doctor = await Doctor.findById(id);
+    if (!doctor) {
+      return res.status(404).json({ message: "No doctor found" });
+    }
+    return res.status(200).json({ doctor });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const apiController = {
+  teacherDetails,
+  parentDetails,
+  analyzeScore,
+  getDoctor,
+};

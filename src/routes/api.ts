@@ -9,3 +9,5 @@ apiRouter.post("/teacher/detail", verifyToken, apiController.teacherDetails);
 apiRouter.post("/parent/detail", verifyToken, apiController.parentDetails);
 
 apiRouter.post("/student/score", verifyToken, apiController.analyzeScore);
+
+apiRouter.get("/doctor/:id", apiController.getDoctor);

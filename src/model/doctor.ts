@@ -8,6 +8,7 @@ const doctorSchema = extendSchema(userSchema, {
   ratings: { type: Number },
   profileImg: String,
   tags: { type: [String] },
+  gender: { type: String },
 });
 
 const Doctor = mongoose.model("Doctor", doctorSchema);
