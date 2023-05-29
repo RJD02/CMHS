@@ -37,6 +37,22 @@ const studentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Teacher",
   },
+  isHealthy: {
+    type: Boolean,
+    default: true,
+  },
+  anxietyScore: {
+    type: Number,
+    default: 0,
+  },
+  depressionScore: {
+    type: Number,
+    default: 0,
+  },
+  stressScore: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const Student = mongoose.model("Student", studentSchema);

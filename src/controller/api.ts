@@ -3,9 +3,11 @@ import Teacher from "../model/teacher";
 import Parent from "../model/parent";
 import { Roles } from "../utils/types";
 import Doctor from "../model/doctor";
+import Student from "../model/student";
 
 const teacherDetails = async (req: Request, res: Response) => {
   const { email, userId } = req.body;
+
   if (!email || !userId)
     return res.status(403).json({ message: "Email and userId required" });
   try {
@@ -21,6 +23,7 @@ const teacherDetails = async (req: Request, res: Response) => {
 
 const parentDetails = async (req: Request, res: Response) => {
   const { email, userId } = req.body;
+  console.log(email, userId);
   if (!email || !userId)
     return res.status(403).json({ message: "Email and userId required" });
   try {
@@ -43,12 +46,23 @@ const analyzeScore = async (req: Request | any, res: Response) => {
       .status(403)
       .json({ message: "Only students can access this page" });
 
+  const student = await Student.findOne({ email: user.email }).populate(
+    "parent"
+  );
+  student.anxietyScore = anxietyScore;
+  student.depressionScore = depressionScore;
+  student.stressScore = stressScore;
+  const parent = student.parent;
+  console.log("parent", parent);
   if (depressionScore === 10 || depressionScore > 5) {
+    student.isHealthy = false;
+    await student.save();
     if (anxietyScore === 10 || anxietyScore > 5) {
       if (stressScore === 10 || stressScore > 5) {
         const doctorsList = await Doctor.find({
           tags: { $in: ["depression", "anxiety", "stress"] },
         });
+
         return res.status(200).json({
           message: "You have high levels of all three abnormalities",
           doctorsList,
@@ -75,6 +89,8 @@ const analyzeScore = async (req: Request | any, res: Response) => {
     }
   } else {
     if (anxietyScore === 10 || anxietyScore > 5) {
+      student.isHealthy = false;
+      await student.save();
       if (stressScore === 10 || stressScore > 5) {
         const doctorList = await Doctor.find({
           tags: { $in: ["anxiety", "stress"] },
@@ -90,6 +106,8 @@ const analyzeScore = async (req: Request | any, res: Response) => {
           .json({ message: "You have high level of anxiety", doctorList });
       }
     } else {
+      student.isHealthy = true;
+      await student.save();
       return res.status(200).json({
         message:
           "You have perfectly normal personality. You don't need a doctor",
