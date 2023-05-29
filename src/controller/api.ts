@@ -113,9 +113,23 @@ const getDoctor = async (req: Request, res: Response) => {
   }
 };
 
+const getDoctors = async (req: Request, res: Response) => {
+  try {
+    const doctors = await Doctor.find({});
+    if (!doctors) {
+      return res.status(200).json({ message: "No doctors in db" });
+    }
+    return res.status(200).json({ doctors });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
 export const apiController = {
   teacherDetails,
   parentDetails,
   analyzeScore,
   getDoctor,
+  getDoctors,
 };
