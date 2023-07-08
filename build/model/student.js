@@ -38,6 +38,22 @@ const studentSchema = new mongoose_1.default.Schema({
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "Teacher",
     },
+    isHealthy: {
+        type: Boolean,
+        default: true,
+    },
+    anxietyScore: {
+        type: Number,
+        default: 0,
+    },
+    depressionScore: {
+        type: Number,
+        default: 0,
+    },
+    stressScore: {
+        type: Number,
+        default: 0,
+    },
 });
 const Student = mongoose_1.default.model("Student", studentSchema);
 exports.default = Student;

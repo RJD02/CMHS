@@ -7,11 +7,12 @@ import Student from "../model/student";
 
 const teacherDetails = async (req: Request, res: Response) => {
   const { email, userId } = req.body;
-
+  console.log(email, userId)
   if (!email || !userId)
     return res.status(403).json({ message: "Email and userId required" });
   try {
-    const teacher = await (await Teacher.findById(userId)).populate("students");
+    const teacher =  (await Teacher.findById(userId));
+    console.log(teacher)
     if (!teacher)
       return res.status(401).json({ message: "No teacher with this id found" });
     return res.status(200).json({ message: "Found teacher", teacher });

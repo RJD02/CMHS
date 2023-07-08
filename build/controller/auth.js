@@ -49,9 +49,13 @@ const loginController = (req, res) => __awaiter(void 0, void 0, void 0, function
         const token = jsonwebtoken_1.default.sign({ user_id: user._id, email }, process.env.TOKEN_KEY, {
             expiresIn: "2h",
         });
+        console.log(token);
         user.token = token;
         yield user.save();
-        return res.status(200).json({ message: "Successfully logged in", user });
+        console.log(user.token);
+        return res
+            .status(200)
+            .json({ message: "Successfully logged in", user, token });
     }
     catch (e) {
         console.log(e);
@@ -60,7 +64,7 @@ const loginController = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.loginController = loginController;
 const signupController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password, type, email, name, parentKey, teacherKey } = req.body;
+    const { username, password, type, email, name, parentKey, teacherKey, tags } = req.body;
     console.log(req.body);
     try {
         // ensure there is no user
@@ -108,16 +112,20 @@ const signupController = (req, res) => __awaiter(void 0, void 0, void 0, functio
             yield parent.save();
         }
         else if (type === types_1.Roles.DOCTOR) {
-            newUser = yield new doctor_1.default({
+            if (!tags || tags.length === 0) {
+                return res.status(200).json({ message: "Add some tags" });
+            }
+            newUser = new doctor_1.default({
                 username,
                 password: encryptedPassword,
                 email,
                 name,
+                tags,
             });
         }
         else if (type === types_1.Roles.TEACHER) {
             const teacherKey = (0, parentKeyGenerator_1.UniqueOTP)(10);
-            newUser = yield new teacher_1.default({
+            newUser = new teacher_1.default({
                 username,
                 password: encryptedPassword,
                 email,
@@ -135,12 +143,17 @@ const signupController = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 parentKey,
             });
         }
+        else {
+            return res.status(404).json({ message: "type not defined" });
+        }
         const token = jsonwebtoken_1.default.sign({ user_id: newUser._id, email }, process.env.TOKEN_KEY, {
             expiresIn: "2h",
         });
         newUser.token = token;
         yield newUser.save();
-        return res.status(200).json({ message: "New user created", user: newUser });
+        return res
+            .status(200)
+            .json({ message: "New user created", user: newUser, token });
     }
     catch (e) {
         console.log(e);

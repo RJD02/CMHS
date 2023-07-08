@@ -11,6 +11,8 @@ const doctorSchema = (0, extendSchema_1.extendSchema)(user_1.userSchema, {
     location: { type: String },
     ratings: { type: Number },
     profileImg: String,
+    tags: { type: [String] },
+    gender: { type: String },
 });
 const Doctor = mongoose_1.default.model("Doctor", doctorSchema);
 exports.default = Doctor;

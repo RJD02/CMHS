@@ -20,6 +20,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const doctor_1 = __importDefault(require("./model/doctor"));
 const auth_1 = __importDefault(require("./routes/auth"));
 const hashing_1 = require("./utils/hashing");
+const api_1 = require("./routes/api");
 console.log((0, hashing_1.hashPassword)("hello world"));
 const app = (0, express_1.default)();
 mongoose_1.default
@@ -35,6 +36,7 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({ origin: "*" }));
 app.use("/auth", auth_1.default);
+app.use("/api", api_1.apiRouter);
 app.post("/api/doctor", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, exp, location, ratings, profileImg } = req.body;
     console.log(req.body);
